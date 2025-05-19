@@ -4,13 +4,12 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
 
     private EditText display;
-    private String currentInput = "";
+    private String vvod = "";
     private double memoryValue = 0;
     private String currentOperator = "";
     private double firstOperand = 0;
@@ -23,39 +22,117 @@ public class MainActivity extends AppCompatActivity {
 
         display = findViewById(R.id.display);
 
-        // Цифровые кнопки
-        int[] digitButtons = {R.id.btn_0, R.id.btn_1, R.id.btn_2, R.id.btn_3, R.id.btn_4,
-                R.id.btn_5, R.id.btn_6, R.id.btn_7, R.id.btn_8, R.id.btn_9};
+        Button btn0 = findViewById(R.id.btn_0);
+        Button btn1 = findViewById(R.id.btn_1);
+        Button btn2 = findViewById(R.id.btn_2);
+        Button btn3 = findViewById(R.id.btn_3);
+        Button btn4 = findViewById(R.id.btn_4);
+        Button btn5 = findViewById(R.id.btn_5);
+        Button btn6 = findViewById(R.id.btn_6);
+        Button btn7 = findViewById(R.id.btn_7);
+        Button btn8 = findViewById(R.id.btn_8);
+        Button btn9 = findViewById(R.id.btn_9);
 
-        for (int id : digitButtons) {
-            findViewById(id).setOnClickListener(v -> onDigitClick(((Button) v).getText().toString()));
-        }
+        btn0.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                vvod += "0";
+                updateDisplay();
+            }
+        });
 
-        // Операторы
+        btn1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                vvod += "1";
+                updateDisplay();
+            }
+        });
+
+        btn2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                vvod += "2";
+                updateDisplay();
+            }
+        });
+
+        btn3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                vvod += "3";
+                updateDisplay();
+            }
+        });
+
+        btn4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                vvod += "4";
+                updateDisplay();
+            }
+        });
+
+        btn5.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                vvod += "5";
+                updateDisplay();
+            }
+        });
+
+        btn6.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                vvod += "6";
+                updateDisplay();
+            }
+        });
+
+        btn7.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                vvod += "7";
+                updateDisplay();
+            }
+        });
+
+        btn8.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                vvod += "8";
+                updateDisplay();
+            }
+        });
+
+        btn9.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                vvod += "9";
+                updateDisplay();
+            }
+        });
+
+
+
         findViewById(R.id.btn_add).setOnClickListener(v -> onOperatorClick("+"));
         findViewById(R.id.btn_subtract).setOnClickListener(v -> onOperatorClick("-"));
-        findViewById(R.id.btn_multiply).setOnClickListener(v -> onOperatorClick("×"));
-        findViewById(R.id.btn_divide).setOnClickListener(v -> onOperatorClick("÷"));
+        findViewById(R.id.btn_multiply).setOnClickListener(v -> onOperatorClick("*"));
+        findViewById(R.id.btn_divide).setOnClickListener(v -> onOperatorClick("/"));
 
-        // Кнопка равно
         findViewById(R.id.btn_equals).setOnClickListener(v -> onEqualsClick());
 
-        // Кнопка очистки
         findViewById(R.id.btn_clear).setOnClickListener(v -> onClearClick());
 
-        // Кнопка удаления последнего символа
         findViewById(R.id.btn_backspace).setOnClickListener(v -> onBackspaceClick());
 
-        // Кнопка точки
         findViewById(R.id.btn_decimal).setOnClickListener(v -> onDecimalClick());
 
-        // Операции с памятью
         findViewById(R.id.btn_memory_clear).setOnClickListener(v -> onMemoryClear());
         findViewById(R.id.btn_memory_recall).setOnClickListener(v -> onMemoryRecall());
         findViewById(R.id.btn_memory_add).setOnClickListener(v -> onMemoryAdd());
         findViewById(R.id.btn_memory_subtract).setOnClickListener(v -> onMemorySubtract());
 
-        // Специальные операции
         findViewById(R.id.btn_sqrt).setOnClickListener(v -> onSqrtClick());
         findViewById(R.id.btn_percent).setOnClickListener(v -> onPercentClick());
         findViewById(R.id.btn_reciprocal).setOnClickListener(v -> onReciprocalClick());
@@ -63,17 +140,17 @@ public class MainActivity extends AppCompatActivity {
 
     private void onDigitClick(String digit) {
         if (isNewInput) {
-            currentInput = digit;
+            vvod = digit;
             isNewInput = false;
         } else {
-            currentInput += digit;
+            vvod += digit;
         }
         updateDisplay();
     }
 
     private void onOperatorClick(String operator) {
-        if (!currentInput.isEmpty()) {
-            firstOperand = Double.parseDouble(currentInput);
+        if (!vvod.isEmpty()) {
+            firstOperand = Double.parseDouble(vvod);
             currentOperator = operator;
             isNewInput = true;
         }
@@ -81,30 +158,30 @@ public class MainActivity extends AppCompatActivity {
 
     private void onEqualsClick() {
         if (!currentOperator.isEmpty() && !isNewInput) {
-            double secondOperand = Double.parseDouble(currentInput);
-            double result = 0;
+            double secondOperand = Double.parseDouble(vvod);
+            double resultat = 0;
 
             switch (currentOperator) {
                 case "+":
-                    result = firstOperand + secondOperand;
+                    resultat = firstOperand + secondOperand;
                     break;
                 case "-":
-                    result = firstOperand - secondOperand;
+                    resultat = firstOperand - secondOperand;
                     break;
-                case "×":
-                    result = firstOperand * secondOperand;
+                case "*":
+                    resultat = firstOperand * secondOperand;
                     break;
-                case "÷":
+                case "/":
                     if (secondOperand != 0) {
-                        result = firstOperand / secondOperand;
+                        resultat = firstOperand / secondOperand;
                     } else {
-                        display.setText("Error");
+                        display.setText("Ошибка");
                         return;
                     }
                     break;
             }
 
-            currentInput = String.valueOf(result);
+            vvod = String.valueOf(resultat);
             currentOperator = "";
             isNewInput = true;
             updateDisplay();
@@ -112,7 +189,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void onClearClick() {
-        currentInput = "";
+        vvod = "";
         firstOperand = 0;
         currentOperator = "";
         isNewInput = true;
@@ -120,10 +197,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void onBackspaceClick() {
-        if (!currentInput.isEmpty()) {
-            currentInput = currentInput.substring(0, currentInput.length() - 1);
-            if (currentInput.isEmpty()) {
-                currentInput = "0";
+        if (!vvod.isEmpty()) {
+            vvod = vvod.substring(0, vvod.length() - 1);
+            if (vvod.isEmpty()) {
+                vvod = "0";
                 isNewInput = true;
             }
             updateDisplay();
@@ -132,10 +209,10 @@ public class MainActivity extends AppCompatActivity {
 
     private void onDecimalClick() {
         if (isNewInput) {
-            currentInput = "0.";
+            vvod = "0.";
             isNewInput = false;
-        } else if (!currentInput.contains(".")) {
-            currentInput += ".";
+        } else if (!vvod.contains(".")) {
+            vvod += ".";
         }
         updateDisplay();
     }
@@ -145,67 +222,66 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void onMemoryRecall() {
-        currentInput = String.valueOf(memoryValue);
+        vvod = String.valueOf(memoryValue);
         isNewInput = true;
         updateDisplay();
     }
 
     private void onMemoryAdd() {
-        if (!currentInput.isEmpty()) {
-            memoryValue += Double.parseDouble(currentInput);
+        if (!vvod.isEmpty()) {
+            memoryValue += Double.parseDouble(vvod);
         }
     }
 
     private void onMemorySubtract() {
-        if (!currentInput.isEmpty()) {
-            memoryValue -= Double.parseDouble(currentInput);
+        if (!vvod.isEmpty()) {
+            memoryValue -= Double.parseDouble(vvod);
         }
     }
 
     private void onSqrtClick() {
-        if (!currentInput.isEmpty()) {
-            double value = Double.parseDouble(currentInput);
+        if (!vvod.isEmpty()) {
+            double value = Double.parseDouble(vvod);
             if (value >= 0) {
-                currentInput = String.valueOf(Math.sqrt(value));
+                vvod = String.valueOf(Math.sqrt(value));
                 isNewInput = true;
                 updateDisplay();
             } else {
-                display.setText("Error");
+                display.setText("Ошибка");
             }
         }
     }
 
     private void onPercentClick() {
-        if (!currentInput.isEmpty()) {
-            double value = Double.parseDouble(currentInput);
-            currentInput = String.valueOf(value / 100);
+        if (!vvod.isEmpty()) {
+            double value = Double.parseDouble(vvod);
+            vvod = String.valueOf(value / 100);
             isNewInput = true;
             updateDisplay();
         }
     }
 
     private void onReciprocalClick() {
-        if (!currentInput.isEmpty()) {
-            double value = Double.parseDouble(currentInput);
+        if (!vvod.isEmpty()) {
+            double value = Double.parseDouble(vvod);
             if (value != 0) {
-                currentInput = String.valueOf(1 / value);
+                vvod = String.valueOf(1 / value);
                 isNewInput = true;
                 updateDisplay();
             } else {
-                display.setText("Error");
+                display.setText("Ошибка");
             }
         }
     }
 
     private void updateDisplay() {
-        if (currentInput.isEmpty()) {
+        if (vvod.isEmpty()) {
             display.setText("0");
         } else {
-            // Удаляем .0 для целых чисел
-            if (currentInput.endsWith(".0")) {
-                display.setText(currentInput.substring(0, currentInput.length() - 2));
+            if (vvod.endsWith(".0")) {
+                display.setText(vvod.substring(0, vvod.length() - 2));
             } else {
-                display.setText(currentInput);
+                display.setText(vvod);
             }
         }
     }

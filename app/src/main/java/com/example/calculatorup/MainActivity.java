@@ -1,68 +1,17 @@
 package com.example.calculatorup;
 
 import android.os.Bundle;
-
-import com.google.android.material.snackbar.Snackbar;
-
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.view.View;
-
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
-
-import com.example.calculatorup.databinding.ActivityMainBinding;
-
-import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
 
-    Button btn0;
-    Button btn1;
-    Button btn2;
-    Button btn3;
-    Button btn4;
-    Button btn5;
-    Button btn6;
-    Button btn7;
-    Button btn8;
-    Button btn9;
-
-    Button btnMplus;
-    Button btnMminus;
-    Button btnMC;
-    Button btnMR;
-
-    Button btnProsent;
-    Button btnDelete;
-    Button btnC;
-    Button btnAC;
-
-    Button btnKvadrat;
-    Button btnProsent1;
-    Button btnKoren;
-    Button btnDelenie;
-
-
-    Button btnPlusMinus;
-    Button btnDote;
-    Button btnRavno;
-
-    Button btnAdd;
-    Button btnSubtract;
-    Button btnMultiply;
-
     private EditText display;
-    private TextView memoryIndicator;
     private String currentInput = "";
     private double memoryValue = 0;
-    private boolean hasMemory = false;
     private String currentOperator = "";
     private double firstOperand = 0;
     private boolean isNewInput = true;
@@ -72,206 +21,192 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        btn0 =  findViewById(R.id.btn_zero);
-        btn1 =  findViewById(R.id.btn_one);
-        btn2 =  findViewById(R.id.btn_two);
-        btn3 =  findViewById(R.id.btn_three);
-        btn4 =  findViewById(R.id.btn_four);
-        btn5 =  findViewById(R.id.btn_five);
-        btn6 =  findViewById(R.id.btn_six);
-        btn7 =  findViewById(R.id.btn_seven);
-        btn8 =  findViewById(R.id.btn_eight);
-        btn9 =  findViewById(R.id.btn_nine);
+        display = findViewById(R.id.display);
 
-        btnMplus = findViewById(R.id.btn_memory_add);
-        btnMminus = findViewById(R.id.btn_memory_subtract);
-        btnMC = findViewById(R.id.btn_memory_clear);
-        btnMR = findViewById(R.id.btn_memory_recall);
+        // Цифровые кнопки
+        int[] digitButtons = {R.id.btn_0, R.id.btn_1, R.id.btn_2, R.id.btn_3, R.id.btn_4,
+                R.id.btn_5, R.id.btn_6, R.id.btn_7, R.id.btn_8, R.id.btn_9};
 
-        btnProsent = findViewById(R.id.btn_percent);
-        btnDelete = findViewById(R.id.btn_backspace);
-        btnC = findViewById(R.id.btn_clear);
-        btnAC = findViewById(R.id.btn_clear_entry);
+        for (int id : digitButtons) {
+            findViewById(id).setOnClickListener(v -> onDigitClick(((Button) v).getText().toString()));
+        }
 
-        btnKvadrat = findViewById(R.id.btn_power);
-        btnProsent1 = findViewById(R.id.btn_square_root);
-        btnKoren = findViewById(R.id.btn_reciprocal);
-        btnDelenie = findViewById(R.id.btn_divide);
+        // Операторы
+        findViewById(R.id.btn_add).setOnClickListener(v -> onOperatorClick("+"));
+        findViewById(R.id.btn_subtract).setOnClickListener(v -> onOperatorClick("-"));
+        findViewById(R.id.btn_multiply).setOnClickListener(v -> onOperatorClick("×"));
+        findViewById(R.id.btn_divide).setOnClickListener(v -> onOperatorClick("÷"));
 
-        btnPlusMinus = findViewById(R.id.btn_negate);
-        btnDote = findViewById(R.id.btn_decimal);
-        btnRavno = findViewById(R.id.btn_equals);
+        // Кнопка равно
+        findViewById(R.id.btn_equals).setOnClickListener(v -> onEqualsClick());
 
-        // Initialize additional buttons from layout
-        btnAdd = findViewById(R.id.btn_add);
-        btnSubtract = findViewById(R.id.btn_subtract);
-        btnMultiply = findViewById(R.id.btn_multiply);
+        // Кнопка очистки
+        findViewById(R.id.btn_clear).setOnClickListener(v -> onClearClick());
 
-        // Decimal point
-        btnDote.setOnClickListener(v -> {
-            if (isNewInput) {
-                currentInput = "0.";
-                isNewInput = false;
-            } else if (!currentInput.contains(".")) {
-                currentInput += ".";
-            }
-            updateDisplay();
-        });
+        // Кнопка удаления последнего символа
+        findViewById(R.id.btn_backspace).setOnClickListener(v -> onBackspaceClick());
 
-        // Basic operations
-        View.OnClickListener operationListener = v -> {
-            Button button = (Button) v;
-            if (!currentInput.isEmpty()) {
-                firstOperand = Double.parseDouble(currentInput);
-            }
-            currentOperator = button.getText().toString();
+        // Кнопка точки
+        findViewById(R.id.btn_decimal).setOnClickListener(v -> onDecimalClick());
+
+        // Операции с памятью
+        findViewById(R.id.btn_memory_clear).setOnClickListener(v -> onMemoryClear());
+        findViewById(R.id.btn_memory_recall).setOnClickListener(v -> onMemoryRecall());
+        findViewById(R.id.btn_memory_add).setOnClickListener(v -> onMemoryAdd());
+        findViewById(R.id.btn_memory_subtract).setOnClickListener(v -> onMemorySubtract());
+
+        // Специальные операции
+        findViewById(R.id.btn_sqrt).setOnClickListener(v -> onSqrtClick());
+        findViewById(R.id.btn_percent).setOnClickListener(v -> onPercentClick());
+        findViewById(R.id.btn_reciprocal).setOnClickListener(v -> onReciprocalClick());
+    }
+
+    private void onDigitClick(String digit) {
+        if (isNewInput) {
+            currentInput = digit;
+            isNewInput = false;
+        } else {
+            currentInput += digit;
+        }
+        updateDisplay();
+    }
+
+    private void onOperatorClick(String operator) {
+        if (!currentInput.isEmpty()) {
+            firstOperand = Double.parseDouble(currentInput);
+            currentOperator = operator;
             isNewInput = true;
-        };
+        }
+    }
 
-        btnAdd.setOnClickListener(operationListener);
-        btnSubtract.setOnClickListener(operationListener);
-        btnMultiply.setOnClickListener(operationListener);
-        btnDelenie.setOnClickListener(operationListener);
+    private void onEqualsClick() {
+        if (!currentOperator.isEmpty() && !isNewInput) {
+            double secondOperand = Double.parseDouble(currentInput);
+            double result = 0;
 
-        // Equals button
-        btnRavno.setOnClickListener(v -> {
-            if (!currentOperator.isEmpty() && !isNewInput) {
-                double secondOperand = Double.parseDouble(currentInput);
-                double result = 0;
-
-                switch (currentOperator) {
-                    case "+":
-                        result = firstOperand + secondOperand;
-                        break;
-                    case "-":
-                        result = firstOperand - secondOperand;
-                        break;
-                    case "*":
-                        result = firstOperand * secondOperand;
-                        break;
-                    case "/":
+            switch (currentOperator) {
+                case "+":
+                    result = firstOperand + secondOperand;
+                    break;
+                case "-":
+                    result = firstOperand - secondOperand;
+                    break;
+                case "×":
+                    result = firstOperand * secondOperand;
+                    break;
+                case "÷":
+                    if (secondOperand != 0) {
                         result = firstOperand / secondOperand;
-                        break;
-                }
-
-                currentInput = String.valueOf(result);
-                updateDisplay();
-                isNewInput = true;
-                currentOperator = "";
+                    } else {
+                        display.setText("Error");
+                        return;
+                    }
+                    break;
             }
-        });
 
-        // Clear buttons
-        btnC.setOnClickListener(v -> {
-            currentInput = "";
-            updateDisplay();
-        });
-
-        btnAC.setOnClickListener(v -> {
-            currentInput = "";
-            firstOperand = 0;
+            currentInput = String.valueOf(result);
             currentOperator = "";
+            isNewInput = true;
             updateDisplay();
-        });
+        }
+    }
 
-        // Memory functions
-        btnMplus.setOnClickListener(v -> {
-            if (!currentInput.isEmpty()) {
-                memoryValue += Double.parseDouble(currentInput);
-                hasMemory = true;
-                updateMemoryIndicator();
-            }
-        });
+    private void onClearClick() {
+        currentInput = "";
+        firstOperand = 0;
+        currentOperator = "";
+        isNewInput = true;
+        display.setText("0");
+    }
 
-        btnMminus.setOnClickListener(v -> {
-            if (!currentInput.isEmpty()) {
-                memoryValue -= Double.parseDouble(currentInput);
-                hasMemory = true;
-                updateMemoryIndicator();
-            }
-        });
-
-        btnMC.setOnClickListener(v -> {
-            memoryValue = 0;
-            hasMemory = false;
-            updateMemoryIndicator();
-        });
-
-        btnMR.setOnClickListener(v -> {
-            if (hasMemory) {
-                currentInput = String.valueOf(memoryValue);
-                updateDisplay();
+    private void onBackspaceClick() {
+        if (!currentInput.isEmpty()) {
+            currentInput = currentInput.substring(0, currentInput.length() - 1);
+            if (currentInput.isEmpty()) {
+                currentInput = "0";
                 isNewInput = true;
             }
-        });
+            updateDisplay();
+        }
+    }
 
-        // Additional functions
-        btnPlusMinus.setOnClickListener(v -> {
-            if (!currentInput.isEmpty()) {
-                double value = Double.parseDouble(currentInput);
-                value = -value;
-                currentInput = String.valueOf(value);
-                updateDisplay();
-            }
-        });
+    private void onDecimalClick() {
+        if (isNewInput) {
+            currentInput = "0.";
+            isNewInput = false;
+        } else if (!currentInput.contains(".")) {
+            currentInput += ".";
+        }
+        updateDisplay();
+    }
 
-        btnKvadrat.setOnClickListener(v -> {
-            if (!currentInput.isEmpty()) {
-                double value = Double.parseDouble(currentInput);
-                value = value * value;
-                currentInput = String.valueOf(value);
-                updateDisplay();
+    private void onMemoryClear() {
+        memoryValue = 0;
+    }
+
+    private void onMemoryRecall() {
+        currentInput = String.valueOf(memoryValue);
+        isNewInput = true;
+        updateDisplay();
+    }
+
+    private void onMemoryAdd() {
+        if (!currentInput.isEmpty()) {
+            memoryValue += Double.parseDouble(currentInput);
+        }
+    }
+
+    private void onMemorySubtract() {
+        if (!currentInput.isEmpty()) {
+            memoryValue -= Double.parseDouble(currentInput);
+        }
+    }
+
+    private void onSqrtClick() {
+        if (!currentInput.isEmpty()) {
+            double value = Double.parseDouble(currentInput);
+            if (value >= 0) {
+                currentInput = String.valueOf(Math.sqrt(value));
                 isNewInput = true;
-            }
-        });
-
-        btnProsent1.setOnClickListener(v -> {
-            if (!currentInput.isEmpty()) {
-                double value = Double.parseDouble(currentInput);
-                value = Math.sqrt(value);
-                currentInput = String.valueOf(value);
                 updateDisplay();
+            } else {
+                display.setText("Error");
+            }
+        }
+    }
+
+    private void onPercentClick() {
+        if (!currentInput.isEmpty()) {
+            double value = Double.parseDouble(currentInput);
+            currentInput = String.valueOf(value / 100);
+            isNewInput = true;
+            updateDisplay();
+        }
+    }
+
+    private void onReciprocalClick() {
+        if (!currentInput.isEmpty()) {
+            double value = Double.parseDouble(currentInput);
+            if (value != 0) {
+                currentInput = String.valueOf(1 / value);
                 isNewInput = true;
-            }
-        });
-
-        btnKoren.setOnClickListener(v -> {
-            if (!currentInput.isEmpty() && !currentInput.equals("0")) {
-                double value = Double.parseDouble(currentInput);
-                value = 1 / value;
-                currentInput = String.valueOf(value);
                 updateDisplay();
-                isNewInput = true;
+            } else {
+                display.setText("Error");
             }
-        });
-
-        btnDelete.setOnClickListener(v -> {
-            if (currentInput.length() > 0) {
-                currentInput = currentInput.substring(0, currentInput.length() - 1);
-                if (currentInput.isEmpty()) {
-                    currentInput = "0";
-                    isNewInput = true;
-                }
-                updateDisplay();
-            }
-        });
-
-        btnProsent.setOnClickListener(v -> {
-            if (!currentInput.isEmpty() && firstOperand != 0) {
-                double value = Double.parseDouble(currentInput);
-                value = firstOperand * value / 100;
-                currentInput = String.valueOf(value);
-                updateDisplay();
-                isNewInput = true;
-            }
-        });
+        }
     }
 
     private void updateDisplay() {
-        display.setText(currentInput);
-    }
-
-    private void updateMemoryIndicator() {
-        memoryIndicator.setText(hasMemory ? "M" : "");
+        if (currentInput.isEmpty()) {
+            display.setText("0");
+        } else {
+            // Удаляем .0 для целых чисел
+            if (currentInput.endsWith(".0")) {
+                display.setText(currentInput.substring(0, currentInput.length() - 2));
+            } else {
+                display.setText(currentInput);
+            }
+        }
     }
 }

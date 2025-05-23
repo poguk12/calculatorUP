@@ -227,4 +227,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="1/x"/>
+
+    <Button
+        android:id="@+id/btn_cosinus"
+        android:layout_width="300px"
+        android:layout_height="300px"
+        android:text="COSINUS"/>
+
 </LinearLayout>

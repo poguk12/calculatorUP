@@ -33,6 +33,8 @@ public class MainActivity extends AppCompatActivity {
         Button button8 = findViewById(R.id.btn_8);
         Button button9 = findViewById(R.id.btn_9);
 
+
+
         button0.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -171,6 +173,20 @@ public class MainActivity extends AppCompatActivity {
                     firstOperand = Double.parseDouble(vvod);
                     currentOperator = "+";
                     isNewInput = true;
+                }
+            }
+        });
+
+        Button btnCos = findViewById(R.id.btn_cosinus);
+        btnCos.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!vvod.isEmpty()) {
+                    double ugol = Double.parseDouble(vvod);
+                    double radian = Math.toRadians(ugol);
+                    double result = Math.cos(radian);
+                    vvod = String.valueOf(result);
+                    updateDisplay();
                 }
             }
         });
